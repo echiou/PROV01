@@ -46,7 +46,7 @@ void loop() {
 //  strip.show();
 
   delayTime = 1000; //We'll change this when we get an accelerometer.
-  double delayTimeOffset = double(delayTime) / 2
+  double delayTimeOffset = double(delayTime) / 2;
   time = millis();
   double whiteLevel;
   for (int i = 0; i < NUM_PIXELS; i++) {
