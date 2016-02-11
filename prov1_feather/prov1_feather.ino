@@ -44,5 +44,5 @@ void loop() {
     }
   }
   strip.show();
-  delay(50); //This should be kept constant
+  delay(100); //This should be kept constant
 }
