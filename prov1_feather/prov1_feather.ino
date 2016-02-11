@@ -35,7 +35,7 @@ void loop() {
     } else { //Decrease
       whiteLevel = ((double)onTime - diff) / ((double)onTime / 2) * 255;
     }
-    if (whiteLevel < 0) {
+    if (whiteLevel < 10) {
       whiteLevel = 0;
     }
     strip.setPixelColor(i, strip.Color((int)whiteLevel, (int)whiteLevel, (int)whiteLevel));

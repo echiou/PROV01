@@ -29,7 +29,11 @@ void loop() {
   // put your main code here, to run repeatedly:
   val = analogRead(POT_PIN);
   double ratio = (double) (val / 1023.0); 
-  showColor(STRIP_FOUR, ratio);
+  showColor(STRIP_ONE, ratio);
+//  Show additional columns only when we have the full grid
+//  showColor(STRIP_TWO, ratio);
+//  showColor(STRIP_THREE, ratio);
+//  showColor(STRIP_FOUR, ratio);
   strip.show(); 
 }
 
@@ -37,6 +41,7 @@ void showColor(int strip_number, double ratio) {
   int redVal = 0;
   int greenVal = 0;
   int blueVal = 0; 
+  // TODO: make this less jank
   if (strip_number == STRIP_ONE) { 
     redVal = (green[0] * ratio) + (blue[0] * (1-ratio)); 
     greenVal = (green[1] * ratio) + (blue[1] * (1-ratio)); 
