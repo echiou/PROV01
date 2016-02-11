@@ -19,16 +19,14 @@ int yellow[3] = {255, 255, 0};
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_PIXELS, STRIP_PIN, NEO_GRB + NEO_KHZ800);
 
 void setup() {
-  // put your setup code here, to run once:
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
 
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  val = analogRead(POT_PIN);
-  double ratio = (double) (val / 1023.0); 
+  val = analogRead(POT_PIN); // potentiometer value
+  double ratio = (double) (val / 1023.0); // used to determine position between hues
   showColor(STRIP_ONE, ratio);
 //  Show additional columns only when we have the full grid
 //  showColor(STRIP_TWO, ratio);
