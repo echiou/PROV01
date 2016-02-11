@@ -4,10 +4,10 @@
 #define STRIP_PIN 6
 #define POT_PIN A1
 
-#define STRIP_ONE 12
+#define STRIP_ONE 0
 #define STRIP_TWO 4
 #define STRIP_THREE 8
-#define STRIP_FOUR 0
+#define STRIP_FOUR 12
 
 int val = 0;
 int green[3] = {0, 255, 0};
