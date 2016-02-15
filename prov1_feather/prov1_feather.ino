@@ -1,6 +1,6 @@
 #include <Adafruit_NeoPixel.h>
 
-#define NUM_PIXELS 4
+#define NUM_PIXELS 16
 #define NP_PIN 6
 #define POT1_PIN A1
 
@@ -63,12 +63,12 @@ void loop() {
       //TODO: This should probably be less jank as well
       if (i < COL_TWO) {
         int ratio = ratio1;
-//      } else if (i < COL_THREE) {
-//        int ratio = ratio2;
-//      } else if (i < COL_FOUR) {
-//        int ratio = ratio3;
-//      } else { // i >= COL_FOUR
-//        int ratio = ratio4;
+      } else if (i < COL_THREE) {
+        int ratio = ratio1; // should be ratio2
+      } else if (i < COL_FOUR) {
+        int ratio = ratio1; // should be ratio3
+      } else { // i >= COL_FOUR
+        int ratio = ratio1; // should be ratio4
       }
       setColor(i, ratio1, brightness); // TODO: Currently only uses ratio1
     }
