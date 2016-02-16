@@ -4,6 +4,8 @@
 #define NP_PIN 6
 #define POT1_PIN A1
 
+#define Y_INPUT A5
+
 #define COL_TWO 4
 #define COL_THREE 8
 #define COL_FOUR 12
@@ -12,7 +14,7 @@
 unsigned long time; //Keep track of the time
 unsigned long stripArr[NUM_PIXELS]; //Time data for strip (when to turn them on/off, etc.)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_PIXELS, NP_PIN, NEO_GRB + NEO_KHZ800);
-int onTime = 1000; // How long light is on
+int onTime = 1500; // How long light is on
 long randOn = 50; // ~5% of cycles, turn on random pixel
 
 // Potentiometer & Colors
@@ -23,6 +25,15 @@ int purple[3] = {255, 0, 255};
 int red[3] = {255, 0, 0};
 int yellow[3] = {255, 255, 0};
 
+// Accelerometer Things
+// initialize to mid-range and allow calibration to
+// find the minimum and maximum for each axis
+int yRawMin = 512;
+int yRawMax = 512;
+ 
+// Take multiple samples to reduce noise
+const int sampleSize = 10;
+ 
 void setup() {
   memset(stripArr, 0, sizeof(stripArr));
 
@@ -31,10 +42,35 @@ void setup() {
 
   Serial.begin(9600);
   Serial.println("Serial Up");
+  
+  onTime = 1500;
 }
 
 void loop() {
-  onTime = 1000; //We'll change this when we get an accelerometer.
+  // Find the Acceleration
+  int yRaw = ReadAxis(Y_INPUT);
+  
+  AutoCalibrate(yRaw);
+  
+  // Convert raw values to 'milli-Gs"
+  long yScaled = map(yRaw, yRawMin, yRawMax, -1000, 1000);
+
+  // re-scale to fractional Gs
+  float yAccel = yScaled / 1000.0;
+
+  
+  // Light Control
+  onTime += (int)(50 * yAccel); //We'll change this when we get an accelerometer.
+  if (onTime < 500) {
+    onTime = 500;
+  }
+  else if (onTime > 2500) {
+    onTime = 2500;
+  }
+  // Debugging
+//  Serial.println(yAccel);
+//  Serial.println(onTime);
+//  Serial.println();
   randOn = 50; //This should also shift with accelerometer maybe.
   time = millis();
 
@@ -109,4 +145,35 @@ void setColor(int ledNum, double ratio, double brightness) {
   int bAdjusted = blueVal * brightness / 255;
 
   strip.setPixelColor(ledNum, rAdjusted, gAdjusted, bAdjusted);
+}
+
+//
+// Read "sampleSize" samples and report the average
+//
+int ReadAxis(int axisPin)
+{
+  long reading = 0;
+  analogRead(axisPin);
+  delay(1);
+  for (int i = 0; i < sampleSize; i++)
+  {
+    reading += analogRead(axisPin);
+  }
+  return reading/sampleSize;
+}
+ 
+//
+// Find the extreme raw readings from each axis
+//
+void AutoCalibrate(int yRaw)
+{
+  Serial.println("Calibrate");
+  if (yRaw < yRawMin)
+  {
+    yRawMin = yRaw;
+  }
+  if (yRaw > yRawMax)
+  {
+    yRawMax = yRaw;
+  }
 }
