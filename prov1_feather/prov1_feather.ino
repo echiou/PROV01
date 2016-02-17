@@ -2,7 +2,10 @@
 
 #define NUM_PIXELS 16
 #define NP_PIN 6
-#define POT1_PIN A1
+#define POT1_PIN A0
+#define POT2_PIN A1
+#define POT3_PIN A2
+#define POT4_PIN A3
 
 #define Y_INPUT A5
 
@@ -18,7 +21,11 @@ int onTime = 1500; // How long light is on
 long randOn = 50; // ~5% of cycles, turn on random pixel
 
 // Potentiometer & Colors
-int val1; // Value of first pot
+double val1; // Value of first pot
+double val2;
+double val3;
+double val4;
+double ratio;
 int green[3] = {0, 255, 0};
 int blue[3] = {0, 0, 255};
 int purple[3] = {255, 0, 255};
@@ -75,7 +82,13 @@ void loop() {
   time = millis();
 
   val1 = analogRead(POT1_PIN); // value for first potentiometer
+  val2 = analogRead(POT2_PIN); // value for second potentiometer
+  val3 = analogRead(POT3_PIN); // value for third potentiometer
+  val4 = analogRead(POT4_PIN); // value for fourth potentiometer
   double ratio1 = (double) (val1 / 1023.0); // used to determine position between hues
+  double ratio2 = (double) (val2 / 1023.0);
+  double ratio3 = (double) (val3 / 1023.0);
+  double ratio4 = (double) (val4 / 1023.0);
 
   double brightness;
   for (int i = 0; i < NUM_PIXELS; i++) {
@@ -96,17 +109,16 @@ void loop() {
       if (brightness < 20) {
         brightness = 20;
       }
-      //TODO: This should probably be less jank as well
       if (i < COL_TWO) {
-        int ratio = ratio1;
+        ratio = ratio1;
       } else if (i < COL_THREE) {
-        int ratio = ratio1; // should be ratio2
+        ratio = ratio2;
       } else if (i < COL_FOUR) {
-        int ratio = ratio1; // should be ratio3
+        ratio = ratio3;
       } else { // i >= COL_FOUR
-        int ratio = ratio1; // should be ratio4
+        ratio = ratio4;
       }
-      setColor(i, ratio1, brightness); // TODO: Currently only uses ratio1
+      setColor(i, ratio, brightness);
     }
     else {
       strip.setPixelColor(i, strip.Color(0, 0, 0));
@@ -123,6 +135,7 @@ void setColor(int ledNum, double ratio, double brightness) {
 
   // TODO: make this less jank
   if (ledNum < COL_TWO) {
+    Serial.println(ratio);
     redVal = (green[0] * ratio) + (blue[0] * (1 - ratio));
     greenVal = (green[1] * ratio) + (blue[1] * (1 - ratio));
     blueVal = (green[2] * ratio) + (blue[2] * (1 - ratio));
@@ -167,7 +180,6 @@ int ReadAxis(int axisPin)
 //
 void AutoCalibrate(int yRaw)
 {
-  Serial.println("Calibrate");
   if (yRaw < yRawMin)
   {
     yRawMin = yRaw;
